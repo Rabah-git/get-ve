@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Technology & Quantum Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #080C14;
+    --surface:   #0E1420;
+    --border:    #1C2535;
+    --accent:    #00C8FF;
+    --accent2:   #7B5FFF;
+    --accent3:   #00FFB0;
+    --text:      #E8EDF5;
+    --muted:     #6B7A96;
+    --card:      #111826;
+    --glow:      rgba(0,200,255,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(8,12,20,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,200,255,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+    pointer-events: none;
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -60%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -60%) scale(1.1); opacity: 0.7; }
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 800px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .hero-cta {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-primary:hover {
+    background: #00AADD;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,200,255,0.3);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .stat {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    max-width: 540px;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── EXPERTISE GRID ── */
+  .expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .expertise-card {
+    background: var(--card);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+
+  .expertise-card:hover { background: var(--surface); }
+
+  .expertise-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .expertise-card:hover::before { opacity: 1; }
+
+  .card-quantum::before { background: var(--accent); }
+  .card-docker::before { background: #2496ED; }
+  .card-ai::before { background: var(--accent2); }
+  .card-hardware::before { background: var(--accent3); }
+  .card-patent::before { background: #FF6B6B; }
+  .card-networks::before { background: #FFD93D; }
+
+  .card-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .card-tags {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── KNOWLEDGE TIMELINE ── */
+  .knowledge-section {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 6rem 4rem;
+  }
+
+  .knowledge-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .topic-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .topic-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .topic-item:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .topic-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+
+  .topic-content h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .topic-content p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── AI COMPARISON TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  thead {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 1rem 1.5rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+  }
+
+  .badge-blue { background: rgba(0,200,255,0.15); color: var(--accent); }
+  .badge-purple { background: rgba(123,95,255,0.15); color: var(--accent2); }
+  .badge-green { background: rgba(0,255,176,0.15); color: var(--accent3); }
+
+  /* ── HARDWARE SPEC ── */
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .spec-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .spec-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .spec-val.ok { color: var(--accent3); }
+  .spec-val.warn { color: #FFD93D; }
+  .spec-val.bad { color: #FF6B6B; }
+
+  .spec-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .spec-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+
+  /* ── FLL SECTION ── */
+  .fll-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    margin-top: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent3);
+    line-height: 2;
+    overflow-x: auto;
+  }
+
+  .fll-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 0.8rem;
+    transition: border-color 0.2s;
+  }
+
+  .fll-step:hover { border-color: var(--accent); }
+
+  .fll-step-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    width: 2rem;
+    flex-shrink: 0;
+  }
+
+  .fll-step-text {
+    font-size: 0.9rem;
+  }
+
+  .fll-step-text strong { color: var(--accent); }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    text-align: center;
+    padding: 8rem 4rem;
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-section h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+  }
+
+  .contact-section p {
+    color: var(--muted);
+    max-width: 420px;
+    margin: 0 auto 2.5rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 4rem;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero, section { padding: 6rem 1.5rem 3rem; }
+    .stats-bar { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .topic-list { grid-template-columns: 1fr; }
+    .spec-grid { grid-template-columns: 1fr; }
+    .expertise-grid { grid-template-columns: 1fr; }
+    .knowledge-section { padding: 4rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">[ PORTFOLIO ]</a>
+  <ul class="nav-links">
+    <li><a href="#expertise">Expertise</a></li>
+    <li><a href="#knowledge">Knowledge</a></li>
+    <li><a href="#ai">AI Research</a></li>
+    <li><a href="#hardware">Hardware</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">// Quantum Systems · AI · Infrastructure</div>
+  <h1>
+    Engineering at the<br>
+    <span class="highlight">edge of physics</span><br>
+    and software.
+  </h1>
+  <p class="hero-sub">
+    From flux-locked loop circuits in SQUID magnetometers to Docker networking and AI platform analysis — I work across the full stack of modern technology.
+  </p>
+  <div class="hero-cta">
+    <a href="#expertise" class="btn btn-primary">View Work</a>
+    <a href="#contact" class="btn btn-outline">Get in Touch</a>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-num">200K</span>
+    <span class="stat-label">Token Context Window</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">6+</span>
+    <span class="stat-label">Technical Domains</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">192Gbps</span>
+    <span class="stat-label">GPMI Peak Bandwidth</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">Φ₀</span>
+    <span class="stat-label">FLL Reset Precision</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">∞</span>
+    <span class="stat-label">FLL Operating Range</span>
+  </div>
+</div>
+
+<!-- EXPERTISE -->
+<section id="expertise">
+  <div class="section-tag">// 01 — Areas of Expertise</div>
+  <h2 class="section-title">What I work with</h2>
+  <p class="section-sub">A range of technical domains explored deeply — from quantum sensing hardware to modern cloud infrastructure and AI platforms.</p>
+
+  <div class="expertise-grid reveal">
+
+    <div class="expertise-card card-quantum">
+      <span class="card-icon">⚛️</span>
+      <div class="card-title">SQUID Magnetometry & FLL</div>
+      <div class="card-desc">Deep expertise in Flux-Locked Loop circuit design, bandwidth optimization, dynamic range expansion, and the operating range expanding unit (US Patent 2012/0206136). Understanding of integrator reset mechanics at integral Φ₀ multiples.</div>
+      <div class="card-tags">
+        <span class="tag">FLL</span>
+        <span class="tag">SQUID</span>
+        <span class="tag">Josephson Junction</span>
+        <span class="tag">Flux Quantum</span>
+        <span class="tag">MEG/MCG</span>
+      </div>
+    </div>
+
+    <div class="expertise-card card-docker">
+      <span class="card-icon">🐳</span>
+      <div class="card-title">Docker & Container Infrastructure</div>
+      <div class="card-desc">Hands-on with Docker networking (bridge, host, overlay, macvlan), container lifecycle management, Docker Compose for multi-service apps, port mapping, DNS resolution, and network isolation strategies.</div>
+      <div class="card-tags">
+        <span class="tag">Docker</span>
+        <span class="tag">Networking</span>
+        <span class="tag">Overlay</span>
+        <span class="tag">iptables</span>
+        <span class="tag">veth pairs</span>
+      </div>
+    </div>
+
+    <div class="expertise-card card-ai">
+      <span class="card-icon">🤖</span>
+      <div class="card-title">AI Platform Analysis</div>
+      <div class="card-desc">Comparative analysis of Claude (Anthropic), ChatGPT (OpenAI), and DeepSeek across capabilities, pricing, privacy, and use cases. Evaluation of emerging self-hosted AI agents like PewDiePie's Odysseus platform.</div>
+      <div class="card-tags">
+        <span class="tag">Claude</span>
+        <span class="tag">ChatGPT</span>
+        <span class="tag">DeepSeek</span>
+        <span class="tag">Odysseus</span>
+        <span class="tag">Local LLM</span>
+      </div>
+    </div>
+
+    <div class="expertise-card card-hardware">
+      <span class="card-icon">🔌</span>
+      <div class="card-title">Hardware Interfaces & Standards</div>
+      <div class="card-desc">Analysis of modern connectivity standards including Thunderbolt (1–4), USB-C, and the emerging GPMI standard from China — offering 192 Gbps bandwidth and 480W power delivery via proprietary Type-B connector.</div>
+      <div class="card-tags">
+        <span class="tag">Thunderbolt 4</span>
+        <span class="tag">GPMI</span>
+        <span class="tag">USB-C</span>
+        <span class="tag">eGPU</span>
+        <span class="tag">VRAM</span>
+      </div>
+    </div>
+
+    <div class="expertise-card card-patent">
+      <span class="card-icon">📄</span>
+      <div class="card-title">Patent Analysis</div>
+      <div class="card-desc">Technical reading and breakdown of US Patent Application 2012/0206136 — a Korean-origin invention by Kim et al. covering FLL circuit improvements for SQUID systems, including the novel operating range expanding unit design.</div>
+      <div class="card-tags">
+        <span class="tag">USPTO</span>
+        <span class="tag">KIPO</span>
+        <span class="tag">Circuit Design</span>
+        <span class="tag">Kim et al.</span>
+      </div>
+    </div>
+
+    <div class="expertise-card card-networks">
+      <span class="card-icon">🌐</span>
+      <div class="card-title">Tokenization & AI Economics</div>
+      <div class="card-desc">Understanding of LLM tokenization (input/output tokens, context windows, cost structures), API pricing models across providers, and how token consumption affects usage limits and daily workflows.</div>
+      <div class="card-tags">
+        <span class="tag">Tokens</span>
+        <span class="tag">Context Window</span>
+        <span class="tag">API Pricing</span>
+        <span class="tag">Rate Limits</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- KNOWLEDGE TOPICS -->
+<div class="knowledge-section" id="knowledge">
+  <div class="knowledge-inner">
+    <div class="section-tag">// 02 — Topics Explored</div>
+    <h2 class="section-title">Conversations & Research</h2>
+    <p class="section-sub">A record of technical domains covered in depth across this session.</p>
+
+    <div class="topic-list reveal">
+
+      <div class="topic-item">
+        <span class="topic-num">01</span>
+        <div class="topic-content">
+          <h4>Claude Free Plan & Limits</h4>
+          <p>Rolling 5-hour window reset, token consumption model, model access tiers, and comparison between Free, Pro, and Max plans.</p>
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <span class="topic-num">02</span>
+        <div class="topic-content">
+          <h4>FLL Bandwidth Optimization</h4>
+          <p>Loop gain, phase margin, parasitic capacitance, preamplifier bandwidth, two-stage SQUID amplifiers, digital FLL, and lead-lag compensation.</p>
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <span class="topic-num">03</span>
+        <div class="topic-content">
+          <h4>Docker Networking Deep Dive</h4>
+          <p>Linux namespaces, veth pairs, iptables NAT, bridge/host/overlay/macvlan drivers, embedded DNS, port mapping, and network isolation.</p>
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <span class="topic-num">04</span>
+        <div class="topic-content">
+          <h4>PewDiePie's Odysseus AI Agent</h4>
+          <p>Self-hosted local AI workspace with persistent memory, autonomous agents, multi-model support, and privacy-first architecture.</p>
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <span class="topic-num">05</span>
+        <div class="topic-content">
+          <h4>HP Envy Hardware Analysis</h4>
+          <p>VRAM assessment (495 MB), RAM (8 GB), local AI feasibility, eGPU options via Thunderbolt, and upgrade pathways for AI workloads.</p>
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <span class="topic-num">06</span>
+        <div class="topic-content">
+          <h4>GPMI — China's Port Standard</h4>
+          <p>General Purpose Media Interface: 192 Gbps bandwidth, 480W power, Type-B proprietary connector vs Type-C, comparison with Thunderbolt 5.</p>
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <span class="topic-num">07</span>
+        <div class="topic-content">
+          <h4>AI Platform Comparison</h4>
+          <p>Claude vs ChatGPT vs DeepSeek across writing, coding, reasoning, multilingual output, pricing, privacy, and API reliability.</p>
+        </div>
+      </div>
+
+      <div class="topic-item">
+        <span class="topic-num">08</span>
+        <div class="topic-content">
+          <h4>Patent US 2012/0206136 Analysis</h4>
+          <p>Complete breakdown of the FLL circuit innovation — from problem statement through component design, pulse generation, output encoding, and claims.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- AI COMPARISON -->
+<section id="ai">
+  <div class="section-tag">// 03 — AI Research</div>
+  <h2 class="section-title">AI Platform Comparison</h2>
+  <p class="section-sub">A structured analysis of the three major AI platforms evaluated during this session.</p>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Strength</th>
+          <th>API Cost (Input)</th>
+          <th>Privacy</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Claude</strong> <span class="badge badge-blue">Anthropic</span></td>
+          <td>Long-form writing, coding, analysis</td>
+          <td>~$3 / 1M tokens</td>
+          <td>Strong</td>
+          <td>Important work, nuanced tasks</td>
+        </tr>
+        <tr>
+          <td><strong>ChatGPT</strong> <span class="badge badge-purple">OpenAI</span></td>
+          <td>Multimodal, broadest ecosystem</td>
+          <td>~$5 / 1M tokens</td>
+          <td>Moderate</td>
+          <td>All-round, visual tasks</td>
+        </tr>
+        <tr>
+          <td><strong>DeepSeek</strong> <span class="badge badge-green">DeepSeek</span></td>
+          <td>Cost-efficiency, multilingual</td>
+          <td>~$0.27 / 1M tokens</td>
+          <td>⚠️ Concerns</td>
+          <td>High-volume, budget tasks</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- HARDWARE -->
+<section id="hardware">
+  <div class="section-tag">// 04 — Hardware Assessment</div>
+  <h2 class="section-title">HP Envy Analysis</h2>
+  <p class="section-sub">Hardware specs evaluated against local AI inference requirements.</p>
+
+  <div class="spec-grid reveal">
+    <div class="spec-card">
+      <span class="spec-val ok">8 GB</span>
+      <div class="spec-label">System RAM</div>
+      <div class="spec-note">✅ Meets minimum for Odysseus interface</div>
+    </div>
+    <div class="spec-card">
+      <span class="spec-val bad">495 MB</span>
+      <div class="spec-label">VRAM</div>
+      <div class="spec-note">❌ Insufficient for local LLM inference</div>
+    </div>
+    <div class="spec-card">
+      <span class="spec-val warn">Cloud API</span>
+      <div class="spec-label">Recommended Mode</div>
+      <div class="spec-note">⚡ Use Claude/OpenAI API via Odysseus</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 3rem;">
+    <div class="section-tag">// Connectivity Standards</div>
+    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 600; margin: 1rem 0;">GPMI vs Thunderbolt</h3>
+
+    <div class="table-wrap reveal">
+      <table>
+        <thead>
+          <tr>
+            <th>Standard</th>
+            <th>Bandwidth</th>
+            <th>Power</th>
+            <th>Connector</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>GPMI Type-B</strong></td>
+            <td>192 Gbps</td>
+            <td>480W</td>
+            <td>Proprietary</td>
+            <td><span class="badge badge-green">New 2026</span></td>
+          </tr>
+          <tr>
+            <td><strong>GPMI Type-C</strong></td>
+            <td>96 Gbps</td>
+            <td>240W</td>
+            <td>USB-C</td>
+            <td><span class="badge badge-green">New 2026</span></td>
+          </tr>
+          <tr>
+            <td><strong>Thunderbolt 5</strong></td>
+            <td>80 Gbps</td>
+            <td>140W</td>
+            <td>USB-C</td>
+            <td><span class="badge badge-blue">Current</span></td>
+          </tr>
+          <tr>
+            <td><strong>Thunderbolt 4</strong></td>
+            <td>40 Gbps</td>
+            <td>100W</td>
+            <td>USB-C</td>
+            <td><span class="badge badge-purple">Common</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FLL SECTION -->
+<div class="knowledge-section">
+  <div class="knowledge-inner">
+    <div class="section-tag">// 05 — Quantum Systems</div>
+    <h2 class="section-title">FLL Innovation Summary</h2>
+    <p class="section-sub">The key changes introduced in Patent US 2012/0206136 over prior art.</p>
+
+    <div style="margin-top: 2rem;" class="reveal">
+      <div class="fll-step">
+        <span class="fll-step-num">01</span>
+        <div class="fll-step-text">Reset integrator at <strong>integral multiples of Φ₀</strong> — not at 0V — ensuring seamless FLL continuity</div>
+      </div>
+      <div class="fll-step">
+        <span class="fll-step-num">02</span>
+        <div class="fll-step-text"><strong>Eliminated additional current sources</strong> — reduced hardware complexity and power consumption</div>
+      </div>
+      <div class="fll-step">
+        <span class="fll-step-num">03</span>
+        <div class="fll-step-text"><strong>Single output line</strong> encodes both voltage and reset events via sampling pulses (±V_RS)</div>
+      </div>
+      <div class="fll-step">
+        <span class="fll-step-num">04</span>
+        <div class="fll-step-text"><strong>Window comparator</strong> design provides bidirectional flux awareness — knows which limit was hit</div>
+      </div>
+      <div class="fll-step">
+        <span class="fll-step-num">05</span>
+        <div class="fll-step-text"><strong>Precise pulse timing</strong> — reset pulse width t_RT &lt; sampling pulse t_W ensures full capacitor discharge</div>
+      </div>
+      <div class="fll-step">
+        <span class="fll-step-num">06</span>
+        <div class="fll-step-text"><strong>Software-based V_TOT calculation</strong>: V_TOT = N × V_RM + V_INT — unlimited operating range</div>
+      </div>
+    </div>
+
+    <div class="fll-block reveal">
+// FLL Total Output Formula<br>
+V_TOT = N × V_RM + V_INT<br><br>
+// Flux Conversion<br>
+Φ_TOT = V_TOT × (Φ_RM / V_RM)<br><br>
+// Where:<br>
+//   N     = reset counter (software, unlimited)<br>
+//   V_RM  = reference reset voltage<br>
+//   V_INT = current integrator output<br>
+//   Φ_RM  = interval flux (integral multiple of Φ₀)
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="section-tag" style="justify-content: center; display: flex;">// 06 — Get in Touch</div>
+  <h2>Let's build something<br><span style="background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">extraordinary.</span></h2>
+  <p>Whether it's quantum sensing systems, AI infrastructure, or hardware integration — let's talk.</p>
+  <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <a href="mailto:hello@portfolio.dev" class="btn btn-primary">Send a Message</a>
+    <a href="#expertise" class="btn btn-outline">View Work Again</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 — Built with curiosity across quantum & software</span>
+  <span>[ SQUID · Docker · AI · GPMI · FLL ]</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Smooth active nav
+  const sections = document.querySelectorAll('section, [id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id') || '';
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--accent)' : '';
+    });
+  });
+</script>
+</body>
+</html>
